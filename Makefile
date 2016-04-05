@@ -16,3 +16,9 @@ run:
 
 shell:
 	docker run --rm -it --net host php-websocket-chat bash
+
+# for windows using hyper-v
+port-forwards:
+	echo "needs to run as admin user"
+	netsh interface portproxy add v4tov4 listenport=80 connectaddress=10.0.75.2 connectport=80 protocol=tcp
+	netsh interface portproxy add v4tov4 listenport=9300 connectaddress=10.0.75.2 connectport=9300 protocol=tcp
