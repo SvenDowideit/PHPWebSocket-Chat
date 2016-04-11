@@ -52,4 +52,8 @@ show `docker-compose`
 
 # Run: in cloud.docker.com
 
-# 
+# Run: Swarm / UCP
+
+Make the demo box a UCP master, and join the 2 notebooks to it? Then run the chat app over 3 computers - redis db on the DO box, and then have 2 websocket servers talking to it?
+
+shows how the overlay network makes connecting containers transparent

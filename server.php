@@ -16,6 +16,16 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 		return;
 	}
 
+$redis = new Redis();    
+$redis->pconnect('dns1.fi.gy',6378);
+$redis->ping();
+$redis->set("tutorial-name", "Redis tutorial");
+   // Get the stored data and print it
+echo "Stored string in redis:: " + jedis.get("tutorial-name");
+//$redis->publish('chat', 'ole');
+//$redis->publish('chat', $message);
+$redis->close();
+
 	//The speaker is the only person in the room. Don't let them feel lonely.
 	if ( sizeof($Server->wsClients) == 1 )
 		$Server->wsSend($clientID, "There isn't anyone else in the room, but I'll still listen to you. --Your Trusty Server");
