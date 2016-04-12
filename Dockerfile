@@ -2,7 +2,7 @@ FROM php:7-sockets
 MAINTAINER Sven Dowideit <SvenDowideit@home.org.au>
 
 RUN apt-get update \
-	&& apt-get install -y nginx vim git \
+	&& apt-get install -y vim git \
 	&& rm -r /var/lib/apt/lists/*
 
 WORKDIR /var/www/html/
@@ -22,4 +22,5 @@ RUN composer install
 
 COPY . /var/www/html/
 
-CMD ["/var/www/html/start.sh"]
+#CMD ["/var/www/html/start.sh"]
+CMD ["php", "server.php"]

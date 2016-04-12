@@ -16,7 +16,7 @@ class MyChat implements MessageComponentInterface {
 	public function __construct() {
 	global $loop;
 		$this->clients = new \SplObjectStorage;
-		$this->redis = new Predis\Async\Client('tcp://dns1.fi.gy:6379', $loop);
+		$this->redis = new Predis\Async\Client('tcp://redis:6379', $loop);
 	}
 
 	public function onOpen(ConnectionInterface $conn) {
@@ -51,7 +51,7 @@ $chat = new MyChat;
 $app->route('/chat', $chat);
 $app->route('/echo', new Ratchet\Server\EchoServer, array('*'));
 
-$redis = new Predis\Async\Client('tcp://dns1.fi.gy:6379', $loop);
+$redis = new Predis\Async\Client('tcp://redis:6379', $loop);
 $redis->connect(function ($redis) use ($loop, $chat) {
 	echo "Connected to Redis, now listening for incoming messages...\n";
 
