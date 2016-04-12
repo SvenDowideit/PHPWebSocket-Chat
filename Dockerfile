@@ -1,4 +1,4 @@
-FROM php:5-sockets
+FROM php:7-sockets
 MAINTAINER Sven Dowideit <SvenDowideit@home.org.au>
 
 RUN apt-get update \
@@ -9,6 +9,15 @@ WORKDIR /var/www/html/
 
 # process the composer.json
 COPY composer.json /var/www/html/
+
+# pre-reqs for predis/predis-async
+#RUN apt-get update \
+#	&& apt-get install -y libhiredis-dev \
+#	&& rm -r /var/lib/apt/lists/*
+#RUN cd /tmp && git clone https://github.com/nrk/phpiredis.git \
+#	&& cd phpiredis \
+#	&& phpize && ./configure --enable-phpiredis \
+#	&& make && make install
 RUN composer install
 
 COPY . /var/www/html/
