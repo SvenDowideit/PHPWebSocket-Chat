@@ -1,97 +1,44 @@
 <?php
-// prevent the server from timing out
-set_time_limit(0);
+use Ratchet\MessageComponentInterface;
+use Ratchet\ConnectionInterface;
 
-// include the web sockets server script (the server is started at the far bottom of this file)
-require 'class.PHPWebSocket.php';
+    // Make sure composer dependencies have been installed
+    require __DIR__ . '/vendor/autoload.php';
 
-// when a client sends data to the server
-function wsOnMessage($clientID, $message, $messageLength, $binary) {
-	global $Server;
-	global $redis;
-	$ip = long2ip( $Server->wsClients[$clientID][6] );
+/**
+ * chat.php
+ * Send any incoming messages to all connected clients (except sender)
+ */
+class MyChat implements MessageComponentInterface {
+    protected $clients;
 
-	// check if message length is 0
-	if ($messageLength == 0) {
-		$Server->wsClose($clientID);
-		return;
-	}
+    public function __construct() {
+        $this->clients = new \SplObjectStorage;
+    }
 
-//$redis->ping();
-//$redis->set("tutorial-name", $message);
-   // Get the stored data and print it
-//echo "Stored string in redis:: " + $redis->get("tutorial-name");
-$redis->publish('chat', $message);
-	//The speaker is the only person in the room. Don't let them feel lonely.
-	if ( sizeof($Server->wsClients) == 1 )
-		$Server->wsSend($clientID, "There isn't anyone else in the room, but I'll still listen to you. --Your Trusty Server");
-	else
-		foreach ( $Server->wsClients as $id => $client )
-			if ( $id != $clientID )
-				$Server->wsSend($id, "Visitor $clientID ($ip) said \"$message\"");
+    public function onOpen(ConnectionInterface $conn) {
+        $this->clients->attach($conn);
+    }
 
-}
+    public function onMessage(ConnectionInterface $from, $msg) {
+        foreach ($this->clients as $client) {
+            if ($from != $client) {
+                $client->send($msg);
+            }
+        }
+    }
 
-// when a client connects
-function wsOnOpen($clientID)
-{
-	global $Server;
-	$ip = long2ip( $Server->wsClients[$clientID][6] );
+    public function onClose(ConnectionInterface $conn) {
+        $this->clients->detach($conn);
+    }
 
-	$Server->log( "$ip ($clientID) has connected." );
-
-	//Send a join notice to everyone but the person who joined
-	foreach ( $Server->wsClients as $id => $client )
-		if ( $id != $clientID )
-			$Server->wsSend($id, "Visitor $clientID ($ip) has joined the room.");
-}
-
-// when a client closes or lost connection
-function wsOnClose($clientID, $status) {
-	global $Server;
-	$ip = long2ip( $Server->wsClients[$clientID][6] );
-
-	$Server->log( "$ip ($clientID) has disconnected." );
-
-	//Send a user left notice to everyone in the room
-	foreach ( $Server->wsClients as $id => $client )
-		$Server->wsSend($id, "Visitor $clientID ($ip) has left the room.");
-}
-
-// start the server
-$Server = new PHPWebSocket();
-$Server->bind('message', 'wsOnMessage');
-$Server->bind('open', 'wsOnOpen');
-$Server->bind('close', 'wsOnClose');
-// for other computers to connect, you will probably need to change this to your LAN IP or external IP,
-// alternatively use: gethostbyaddr(gethostbyname($_SERVER['SERVER_NAME']))
-$redis = new Redis();    
-$redis->pconnect('dns1.fi.gy',6379);
-$redis->set("tutorial-name", "Redis tutorial");
-$redis->ping();
-
-function subscribef($redis, $chan, $message) {
-    global $Server;
-    $Server->log( "($chan) $message" );
-    switch($chan) {
-        case 'chat':
-            print "get $message from $chan\n";
-	 	//The speaker is the only person in the room. Don't let them feel lonely.
-//		foreach ( $Server->wsClients as $id => $client )
-//			$Server->wsSend($id, "said \"$message\"");
-            break;
-        case 'chan-2':
-            print "get $message FROM $chan\n";
-            break;
-        case 'chan-3':
-            break;
+    public function onError(ConnectionInterface $conn, \Exception $e) {
+        $conn->close();
     }
 }
- 
-ini_set('default_socket_timeout', -1);
- 
 
-$Server->wsStartServer('0.0.0.0', 9300);
-$redis->subscribe(array('chat', 'chan-2'), 'subscribef');
-
-?>
+    // Run the server application through the WebSocket protocol on port 8080
+    $app = new Ratchet\App('localhost', 9300);
+    $app->route('/chat', new MyChat);
+    $app->route('/echo', new Ratchet\Server\EchoServer, array('*'));
+    $app->run();
