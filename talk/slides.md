@@ -1,31 +1,36 @@
-
 # Dockerize your application stack
 ## Sven Dowideit
 
-Learn how to take a working web app with several moving parts to a 
-set of Docker containers that can be used to develop, test and deploy with.
-Bring your own application stack, or learn by working with the one I use as the example.
-We'll cover migration, development and local testing. 
+                        ##         .
+                  ## ## ##        ==
+               ## ## ## ## ##    ===
+           /"""""""""""""""""\___/ ===
+      ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+           \______ o           __/
+             \    \         __/
+              \____\_______/
 
-Then deploy to the Cloud, and anything the group wants to cover.
+Please start by installing __Docker Toolbox__
+
+       https://www.docker.com/products/docker-toolbox
 
 # What can Docker do.
 
-Build Ship and Run
+Build, Ship and Run
 
 # Experimentation
 
 * Start a container, do some silly things - delete everything
 * stop it, start a new one - look, its ok
 
-alpine, debian, fedora, 
+alpine, debian, fedora
 
 
 # What are containers
 
 Its a process, with some settings that limit its ability to see outside its "wrapper"
 
-default limits: network, filesystem, userspace, resources
+default limits: process, filesystem, user, network, control groups
 
 # Build: Creating a Container filesystem
 
@@ -38,22 +43,66 @@ by building the image using a `Dockerfile` definition.
 ## CMD / ENTRYPOINT
 ## ENV / ARG
 
+# What's a Docker Image
+
+Its actually a union of filesystem layers - each of the Dockerfile instructions
+cause a new layer to be made.
+
+But - you can share layers.
+
+* `docker images`
+* `docer inspect`
+* `docker history`
+* `docker rmi`
+* `docker tag`
+* `save`, `load`, `export`, `import`, `commit`, `diff`
+
 # Ship: making Images available
 
-Hub, `docker push`, `docker pull`, private registrys
+Hub, `docker login`, `docker push`, `docker search`, `docker pull`, private registrys
 
 # Run: locally
 
 `docker run ...`
 
+* `docker run -d`
+* `docker run -it --rm`
+
+* `ps`, `stop`, `kill`, `ports`, `logs`, `top`, `stats`, `wait`
+* `events`, `attach`
+* `cp`
+* `exec`
+
+# Run: common settings
+
+* `--ports`
+* `--volumes`
+* `--readonly`
+* `--env` / `--env-file`
+* `--name`
+* `--workdir`
+* `--link`
+* `--net`
+
+# Run: `docker network`
+
+Create named networks, and dynamically dis/connect containers to them..
+Same thing with `--link`
+
+default `bridge`, `host`, `none` networks, create your own `bridge` and `overlay`
+
+`docker network ls`
+`docker network inspect`
+`docker network create`
+
 # Run: more than one
 
-show `docker-compose`
+`docker-compose`
 
 # Run: in cloud.docker.com
 
 # Run: Swarm / UCP
 
-Make the demo box a UCP master, and join the 2 notebooks to it? Then run the chat app over 3 computers - redis db on the DO box, and then have 2 websocket servers talking to it?
+# Lets start playing
 
-shows how the overlay network makes connecting containers transparent
+Do we have anything specific in mind?
