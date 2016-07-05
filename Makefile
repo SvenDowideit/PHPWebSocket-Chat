@@ -2,9 +2,14 @@
 
 default: build run
 
+pull:
+	docker pull svendowideit/php-websocket-chat
+	docker pull svendowideit/php-websocket-chat:nginx
+	docker pull redis
+
 build:
 	docker build -t svendowideit/php-websocket-chat .
-	docker build -t svendowideit/php-websocket-chat nginx
+	docker build -t svendowideit/php-websocket-chat:nginx nginx
 
 php5:
 	 docker build -t svendowideit/php:5-sockets php5
