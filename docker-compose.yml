@@ -1,17 +1,19 @@
 version: '2'
 services:
   nginx:
-    build:
-      context: ./nginx/
+#    build:
+#      context: ./nginx/
+    image: svendowideit/php-websocket-chat:nginx
     ports:
       - "80:80"
-  redis:
-    image: redis
   socket:
-    build:
-      context: .
-      dockerfile: Dockerfile
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+    image: svendowideit/php-websocket-chat:latest
     links:
       - redis
     ports:
       - "9300:9300"
+  redis:
+    image: redis

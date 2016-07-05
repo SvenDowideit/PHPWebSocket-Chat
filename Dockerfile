@@ -1,4 +1,4 @@
-FROM php:7-sockets
+FROM svendowideit/php:7-sockets
 MAINTAINER Sven Dowideit <SvenDowideit@home.org.au>
 
 RUN apt-get update \

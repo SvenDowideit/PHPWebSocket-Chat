@@ -4,12 +4,13 @@ default: build run
 
 build:
 	docker build -t svendowideit/php-websocket-chat .
+	docker build -t svendowideit/php-websocket-chat nginx
 
 php5:
-	 docker build -t svendowideit/php:5-sockets -f php5/Dockerfile php5
+	 docker build -t svendowideit/php:5-sockets php5
 
 php7:
-	 docker build -t svendowideit/php:7-sockets -f php7/Dockerfile php7
+	 docker build -t svendowideit/php:7-sockets php7
 
 run:
 	docker run --rm -it -p 80:80 -p 9300:9300 sendowideit/php-websocket-chat
